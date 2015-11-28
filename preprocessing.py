@@ -1,9 +1,10 @@
 from os import listdir
 from pandas import DataFrame
+import numpy
 
-def get_data(base_path=None,max_datapoints=None):
-    if max_datapoints is None:
-        max_datapoints = -1
+def process_raw_data(base_path=None,max_training_datapoints=None, starting_pos=0):
+    if max_training_datapoints is None:
+        max_training_datapoints = -1
     if base_path is None:
         base_path='./txt_sentoken/'
 
@@ -12,23 +13,26 @@ def get_data(base_path=None,max_datapoints=None):
 
     polarities = ['neg', 'pos']
 
+    test_files = {polarities[0]: [], polarities[1]: []}
     for polarity in polarities:
-        iterations_left = max_datapoints
+        iterations_left = max_training_datapoints
         for file_name in listdir(base_path+polarity):
+            if starting_pos > 0:
+                starting_pos -= 1
+                test_files[polarity].append(file_name)
+                continue
+            if iterations_left == 0:
+                test_files[polarity].append(file_name)
+                continue
             file = open(base_path+polarity+'/'+file_name,'r')
-            contents = file.read().splitlines()
-            rows.append({'text': " ".join(contents), 'class': polarity})
+            content = file.read().splitlines()
+            file.close()
+            rows.append({'text': " ".join(content), 'class': polarity})
             indexes.append(polarity+'_'+file_name)
             iterations_left -= 1
-            if iterations_left == 0:
-                break
 
-    return DataFrame(rows, index=indexes)
+    data = DataFrame(rows, index=indexes)
+    data = data.reindex(numpy.random.permutation(data.index))
+    return data, test_files
 
 
-def extract_features(data):
-    from sklearn.feature_extraction.text import CountVectorizer
-    count_vectorizer = CountVectorizer()
-    return count_vectorizer.fit_transform(data['text'].values)
-
-print(extract_features(get_data(max_datapoints=10)))
