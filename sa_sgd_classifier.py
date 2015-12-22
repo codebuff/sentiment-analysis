@@ -95,6 +95,6 @@ class SA_SGDClassifier:
 
 
 #test = SA_SGDClassifier(train_data_percentage=90, starting_pos=00, count_vector_type='other')
-test = SA_SGDClassifier(train_data_percentage=90, starting_pos=00)
+test = SA_SGDClassifier(train_data_percentage=90, starting_pos=00, count_vector_type='other')
 test.train()
 test.predict_from_test_data()
