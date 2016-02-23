@@ -10,7 +10,7 @@ class SA_MultinomialNB:
         self.test_values = None
         self.training_data = None
         self.test_data_files = None
-        self.train_data_percentage =train_data_percentage
+        self.train_data_percentage = train_data_percentage
         self.data_base_path = data_base_path
         self.starting_pos = starting_pos
         self.total_entries = total_entries
@@ -20,14 +20,14 @@ class SA_MultinomialNB:
             self.count_vectorizer = CountVectorizer()
         else:
             # just put anything different than 'normal' count_vector_type while initializing
-            self.count_vectorizer = CountVectorizer(ngram_range=(1,  2))
+            self.count_vectorizer = CountVectorizer(ngram_range=(1, 2))
         self.tf_idf = TfidfTransformer()
         self.initialized = False
         self.trained = False
         self.initialize()
 
     def initialize(self):
-        max_training_datapoints = int(self.total_entries * (self.train_data_percentage/100))
+        max_training_datapoints = int(self.total_entries * (self.train_data_percentage / 100))
         if self.total_entries - max_training_datapoints < self.starting_pos:
             print('incorrect parameters provided check starting_pos and training_percentage')
             return
@@ -54,12 +54,12 @@ class SA_MultinomialNB:
         if not self.initialized or not self.trained:
             print('classifier not initialized or not trained')
             return
-        base_path= './txt_sentoken/'
+        base_path = './txt_sentoken/'
         test_reviews = []
         true_outputs = []
         for polarity in self.test_data_files:
             for file_name in self.test_data_files[polarity]:
-                file = open(base_path+polarity+'/'+file_name, 'r')
+                file = open(base_path + polarity + '/' + file_name, 'r')
                 file_content = file.read().splitlines()
                 file.close()
                 test_reviews.append(" ".join(file_content))
